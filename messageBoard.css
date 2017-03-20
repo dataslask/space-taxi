@@ -1,0 +1,8 @@
+ol.messageBoard{
+  margin:0;
+  padding:0;
+}
+
+.messageBoard li {
+  list-style: none;
+}

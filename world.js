@@ -1,11 +1,77 @@
-var Victor = require('victor');
+var _ = require("lodash");
 
-var g = new Victor(0.00, 0.01);
+require("./world.css");
 
-module.exports = {
-  w:800,
-  h:600,
-  g: function(x, y){
-      return g;
+var canvas = document.createElement("CANVAS");
+canvas.className = "world";
+
+var ctx = canvas.getContext("2d");
+var lastTicks = 0;
+
+var world = {
+    entities: [],
+    width: canvas.width,
+    height: canvas.height,
+    gravity(x, y) {
+        return {
+            x: 0,
+            y: 0.025
+        };
+    },
+    appendTo(element) {
+        element.appendChild(canvas);
+        return this;
+    },
+    resize(width, height) {
+        console.debug(`Resize: ${width}, ${height}`);
+        this.width = width;
+        this.height = height;
+        canvas.width = width;
+        canvas.height = height;
+        return this;
+    },
+    add(entity) {
+        this.entities.push(entity);
+        return this;
+    },
+    fps:0,
+    tick(hitTest) {
+      var now = new Date().getMilliseconds();
+      this.fps = 1000 / (now - lastTicks);
+      lastTicks = now;
+
+        _.forEach(this.entities, entity => {
+            entity.tick(this);
+        });
+        for (var i = 0; i < this.entities.length; i++) {
+            for (var j = i + 1; j < this.entities.length; j++) {
+                hitTest(this.entities[i], this.entities[j]);
+            }
+        }
+        return this;
+    },
+    handle(eventName) {
+        if (this.hasOwnProperty(eventName)) {
+            this[eventName]();
+            return tru;
+        }
+        return _.some(this.entities, entity => {
+            if (entity.hasOwnProperty(eventName)) {
+                entity[eventName]();
+                return true;
+            }
+            return false;
+        });
+    },
+    redraw() {
+      ctx.clearRect(0, 0, world.width, world.height);
+      ctx.fillStyle = "black";
+      ctx.fillText(`FPS: ${Math.round(this.fps)}`, 15, 15 * 3);
+        _.forEach(this.entities, entity => {
+            entity.redraw(ctx);
+        });
+        return this;
     }
 };
+
+module.exports = world;
