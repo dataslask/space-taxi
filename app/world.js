@@ -45,6 +45,7 @@ var world = {
         });
         for (var i = 0; i < this.entities.length; i++) {
             for (var j = i + 1; j < this.entities.length; j++) {
+              if (this.entities[i].canMove || this.entities[j].canMove)
                 hitTest(this.entities[i], this.entities[j]);
             }
         }

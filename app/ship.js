@@ -30,6 +30,7 @@ module.exports = {
         down: 0
     },
     type: "ship",
+    canMove: true,
     name: "TheShip",
     redraw(ctx) {
         var w2 = this.width / 2;
