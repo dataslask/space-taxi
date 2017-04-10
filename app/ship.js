@@ -5,11 +5,11 @@ var REFULING = "refuling";
 var G = 0.025;
 var SIDE_THRUSTER = G * 0.5;
 var MAIN_THRUSTER = G * 1.75;
-var LANDING_THRUSTER = G * 1.01;
+var LANDING_THRUSTER = G * 0.95;
 var DOWN_THRUSTER = G * 0.5;
 var MAX_SPEED_WITH_LANDING_GEAR = 2.0;
 var MAX_HORIZONTAL_LANDING_SPEED = 0.5;
-var MAX_VERTICAL_LANDING_SPEED = 1.0;
+var MAX_VERTICAL_LANDING_SPEED = 1.5;
 var FULL_TANK = 100;
 
 var shipShape = require("./shipShape");

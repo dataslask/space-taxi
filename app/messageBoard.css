@@ -1,6 +1,10 @@
 ol.messageBoard{
   margin:0;
   padding:0;
+  position: absolute;
+  top: 5px;
+  right:10px;
+  border:2px solid blue;
 }
 
 .messageBoard li {
