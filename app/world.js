@@ -72,6 +72,14 @@ var world = {
             entity.redraw(ctx);
         });
         return this;
+    },
+    pickPlatform(avoid){
+      var platforms = _.filter(this.entities, {type: "platform"});
+
+      while (true) {
+        var platform = platforms[Math.round(Math.random() * (platforms.length - 1))];
+        if (platform !== avoid) return platform;
+      }
     }
 };
 

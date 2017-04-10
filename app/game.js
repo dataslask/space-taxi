@@ -1,5 +1,9 @@
 require("./game.css");
 
+const names = ["Smith", "Clara", "James", "Susan", "Bob", "Eve", "Hank", "Mary", "Mike", "Emily"];
+
+var Customer = require("./customer");
+
 var lastTicks = 0;
 
 var game = {
@@ -39,10 +43,20 @@ var game = {
         this.tick();
     },
 
-    start(world, ship, startingPlatform) {
+    spawnCustomer(avoid) {
+      var home = this.world.pickPlatform(avoid);
+      var destination =  this.world.pickPlatform(avoid || home);
+      var name = names[Math.round(Math.random() * (names.length - 1))];
+      var customer = new Customer(home, name, destination);
+      this.world.add(customer);
+    },
+
+    start(world, ship) {
         this.world = world;
         this.ship = ship;
-        this.startingPlatform = startingPlatform;
+        var start =  this.world.pickPlatform();
+        this.spawnCustomer(start);
+        this.startingPlatform = start;
         this.restart();
     },
 

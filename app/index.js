@@ -24,31 +24,13 @@ for(var i = 0; i < platforms.length; i++){
   world.add(platforms[i]);
 }
 
-function pickPlatform(avoid){
-  var platform;
-
-  do {
-    platform = Math.round(Math.random() * (platforms.length - 1));
-  }
-  while(platform === avoid);
-
-  return platform;
-}
-
-var home = pickPlatform();
-var destination =  pickPlatform(home);
-var start =  pickPlatform(home);
-
-console.debug("Home=", platforms[home].name, ", destination=", platforms[destination].name, ", start=", platforms[start].name);
-
 world.add(new Solid(0, 0, 10, world.height - 20, "blue", "Wall1"));
 world.add(new Solid(world.width - 10, 0, 10, world.height - 20, "blue", "Wall2"));
-world.add(new Customer(platforms[home], "Smith", platforms[destination]));
 world.add(ship);
 
 var game = require("./game");
 
-game.start(world, ship, platforms[start]);
+game.start(world, ship);
 
 window.onresize = function() {
   world.resize(window.innerWidth, window.innerHeight);
