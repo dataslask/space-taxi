@@ -48,6 +48,7 @@ module.exports = {
             case LANDED:
             case REFULING:
                 ctx.fillText(`${this.message}`, 15, 15);
+                ctx.fillText(`Speed: [${this.vx.toFixed(3)}, ${this.vy.toFixed(3)}]`, 150, 15);
                 break;
             default:
                 ctx.fillText(`Speed: [${this.vx.toFixed(3)}, ${this.vy.toFixed(3)}]`, 15, 15);
@@ -217,7 +218,6 @@ module.exports = {
     },
     "keydown(ArrowUp)" () {
         if (this.state === CRASHED) return;
-        this.state = FLYING;
         this.thrust.up = this.landingGearDeployed ? LANDING_THRUSTER : MAIN_THRUSTER;
     },
     "keyup(ArrowUp)" () {
