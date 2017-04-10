@@ -24,10 +24,8 @@ module.exports = {
     vx: 0,
     vy: 0,
     thrust: {
-        left: 0,
-        right: 0,
-        up: 0,
-        down: 0
+        x: 0,
+        y: 0
     },
     type: "ship",
     canMove: true,
@@ -48,10 +46,9 @@ module.exports = {
             case LANDED:
             case REFULING:
                 ctx.fillText(`${this.message}`, 15, 15);
-                ctx.fillText(`Speed: [${this.vx.toFixed(3)}, ${this.vy.toFixed(3)}]`, 150, 15);
                 break;
             default:
-                ctx.fillText(`Speed: [${this.vx.toFixed(3)}, ${this.vy.toFixed(3)}]`, 15, 15);
+                ctx.fillText(`Speed: [${this.vx.toFixed(3)}, ${this.vy.toFixed(3)}] (${this.thrust.x.toFixed(2)}, ${this.thrust.y.toFixed(2)})`, 15, 15);
         }
         var fuel = this.fuel > 0 ? this.fuel.toFixed(2) : "EMPTY!";
 
@@ -79,10 +76,8 @@ module.exports = {
 
         this.fuel = 0;
         this.thrust = {
-            left: 0,
-            right: 0,
-            up: 0,
-            down: 0
+            x: 0,
+            y: 0
         };
     },
     fly() {
@@ -162,8 +157,8 @@ module.exports = {
                     this.noFuel();
                 }
 
-                this.vx += gravity.x + this.thrust.left - this.thrust.right;
-                this.vy += gravity.y + this.thrust.down - this.thrust.up;
+                this.vx += gravity.x + this.thrust.x;
+                this.vy += gravity.y - this.thrust.y;
                 this.x += this.vx;
                 this.y += this.vy;
                 this.box = shipShape.recalculateBoundingBox(this);
@@ -190,48 +185,39 @@ module.exports = {
 
         this.fly();
         this.landingGearDeployed = !this.landingGearDeployed;
-        if (this.thrust.up) {
+        if (this.thrust.y) {
             this["keydown(ArrowUp)"]();
         }
     },
-    "keydown(ArrowRight)" () {
+    thrustNone(){
+      this.thrust = {left:0, right:0, up:0, down:0};
+    },
+    thrustX(thrust) {
         if (this.state === CRASHED) return;
         if (this.state === LANDED) {
             this.crash("Side thruster fired while landed");
         } else {
-            this.thrust.left = SIDE_THRUSTER;
+            this.thrust.x = thrust;
         }
     },
-    "keyup(ArrowRight)" () {
-        this.thrust.left = 0;
-    },
-    "keydown(ArrowLeft)" () {
+    thrustY (thrust) {
         if (this.state === CRASHED) return;
-        if (this.state === LANDED) {
-            this.crash("Side thruster fired while landed");
-        } else {
-            this.thrust.right = SIDE_THRUSTER;
-        }
+        this.thrust.y = thrust;
     },
-    "keyup(ArrowLeft)" () {
-        this.thrust.right = 0;
-    },
-    "keydown(ArrowUp)" () {
-        if (this.state === CRASHED) return;
-        this.thrust.up = this.landingGearDeployed ? LANDING_THRUSTER : MAIN_THRUSTER;
-    },
-    "keyup(ArrowUp)" () {
-        this.thrust.up = 0;
-    },
-    "keydown(ArrowDown)" () {
-        if (this.state === CRASHED) return;
-        if (this.state === LANDED) {
-            this.crash("Down thruster fired while landed");
-        } else {
-            this.thrust.down = DOWN_THRUSTER;
-        }
-    },
-    "keyup(ArrowDown)" () {
-        this.thrust.down = 0;
-    }
+    "keydown(ArrowRight)" () { this.thrustX(SIDE_THRUSTER); },
+    "keydown(KeyD)" () { this.thrustX(SIDE_THRUSTER); },
+    "keyup(ArrowRight)" () { this.thrustX(0); },
+    "keyup(KeyD)" () { this.thrustX(0); },
+    "keydown(ArrowLeft)" () { this.thrustX(-SIDE_THRUSTER); },
+    "keydown(KeyA)" () { this.thrustX(-SIDE_THRUSTER); },
+    "keyup(ArrowLeft)" () { this.thrustX(0); },
+    "keyup(KeyA)" () { this.thrustX(0); },
+    "keydown(ArrowUp)" () { this.thrustY(this.landingGearDeployed ? LANDING_THRUSTER : MAIN_THRUSTER); },
+    "keydown(KeyW)" () { this.thrustY(this.landingGearDeployed ? LANDING_THRUSTER : MAIN_THRUSTER); },
+    "keyup(ArrowUp)" () { this.thrustY(0); },
+    "keyup(KeyW)" () { this.thrustY(0); },
+    "keydown(ArrowDown)" () { this.thrustY(-DOWN_THRUSTER); },
+    "keydown(KeyX)" () { this.thrustY(-DOWN_THRUSTER); },
+    "keyup(ArrowDown)" () { this.thrustY(0); },
+    "keyup(KeyX)" () { this.thrustY(0); }
 };

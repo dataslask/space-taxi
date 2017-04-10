@@ -39,16 +39,13 @@ module.exports = {
         if (ship.landingGearDeployed) {
             this.drawLandingGear(ctx, x, y);
         }
-        if (ship.thrust.left) {
-            this.drawSideThruster(ctx, x, y, -1, 0);
+        if (ship.thrust.x) {
+            this.drawSideThruster(ctx, x, y, ship.thrust.x > 0 ? -1 : 1, 0);
         }
-        if (ship.thrust.right) {
-            this.drawSideThruster(ctx, x, y, 1, 0);
+        if (ship.thrust.y > 0) {
+            this.drawMainThruster(ctx, x, y, ship.thrust.y);
         }
-        if (ship.thrust.up) {
-            this.drawMainThruster(ctx, x, y, ship.thrust.up);
-        }
-        if (ship.thrust.down) {
+        if (ship.thrust.y < 0) {
             this.drawSideThruster(ctx, x, y, 1, 3);
             this.drawSideThruster(ctx, x, y, -1, 3);
         }

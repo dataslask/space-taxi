@@ -11,7 +11,7 @@ function Customer(platform, name, destination){
 
 
   _.assignIn(this, {
-
+      name,
       origin: platform,
       destination,
       platform,
