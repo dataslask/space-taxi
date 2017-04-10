@@ -177,7 +177,7 @@ module.exports = {
             default:
 
         }
-        this.fuel -= (this.thrust.left + this.thrust.right + this.thrust.up + this.thrust.down);
+        this.fuel -= (Math.abs(this.thrust.x) + Math.abs(this.thrust.y));
     },
     "keydown(Space)" () {},
     "keyup(Space)" () {
