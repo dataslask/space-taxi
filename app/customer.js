@@ -1,5 +1,6 @@
 var _ = require("lodash");
 var messageBoard = require("./messageBoard");
+var hub = require("./hub");
 
 var WIDTH=5;
 var WIDTH2=WIDTH*2;
@@ -9,9 +10,9 @@ var HEAD_RADIUS=HEIGHT/3;
 
 function Customer(platform, name, destination){
 
-
   _.assignIn(this, {
       name,
+      canMove: true,
       origin: platform,
       destination,
       platform,
@@ -35,7 +36,6 @@ function Customer(platform, name, destination){
       tick(world) {},
       hit() {},
       enter(platform){
-        platform.addCustomer(this);
         this.platform = platform;
         this.x = platform.x + platform.width/4;
         this.y = platform.y;
@@ -50,26 +50,46 @@ function Customer(platform, name, destination){
           };
       },
       disembark(ship, platform){
+        console.debug(`${this.name} disembarking at ${platform.name}`);
         this.enter(platform);
-        ship.removeCustomer(this);
         if (this.destination.name === platform.name){
           this.say("Thanx");
         }else {
           this.say("ASSHOLE!")
         }
-
+        hub.broadcast("DISEMBARKED", {customer:this, destination: this.destination, platform});
       },
       board(ship){
-        this.platform.removeCustomer();
+        console.debug(`${this.name} boarding Ship`);
         this.platform = null;
-        ship.addCustomer(this);
-        this.say(`Take me to ${destination.name}`);
+        this.ship = ship;
+        this.x = -1000;
+        this.y = -1000;
+        this.box = this.recalculateBoundingBox();
+        this.say(`Take me to ${this.destination.name}`);
+        hub.broadcast("BOARDED", {customer:this, destination: this.destination});
       },
       say(text){
-        messageBoard.addMessage(`${name}@${platform.name}: ${text}`);
+        var location = this.platform ? this.platform.name : "Ship";
+        messageBoard.addMessage(`${name}@${location}: ${text}`);
+      },
+      attachToHub(){
+        this.subscription = hub.attach((eventName, payload) => {
+          if (this.hasOwnProperty(eventName)) {
+            this[eventName](payload);
+            }
+        });
+      },
+      "LANDED"(payload){
+        if (payload.platform === this.platform){
+          this.board(payload.ship);
+        } else if (this.ship) {
+          this.disembark(payload.ship, payload.platform);
+        }
       }
   });
 
+  this.attachToHub();
   this.enter(platform);
   this.say("HEY TAXY!");
 }

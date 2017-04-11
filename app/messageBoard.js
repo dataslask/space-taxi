@@ -12,6 +12,7 @@ module.exports = {
       var message = document.createElement("LI");
       message.innerText = text;
       messages.appendChild(message);
+      console.debug(text);
       return this;
     }
 };

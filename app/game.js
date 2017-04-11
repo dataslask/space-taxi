@@ -2,6 +2,7 @@ require("./game.css");
 
 const names = ["Smith", "Clara", "James", "Susan", "Bob", "Eve", "Hank", "Mary", "Mike", "Emily"];
 
+var hub = require("./hub");
 var Customer = require("./customer");
 
 var lastTicks = 0;
@@ -66,10 +67,21 @@ var game = {
             return true;
         }
         return false;
-    }
+    },
 
+    attachToHub(){
+      this.subscription = hub.attach((eventName, payload) => {
+        if (this.hasOwnProperty(eventName)) {
+          this[eventName](payload);
+          }
+      });
+    },
+    "BOARDED"(payload){
+      console.debug(`${payload.customer.name} boarded taxi`);
+    }
 };
 
+game.attachToHub();
 
 window.addEventListener("keydown", e => {
     var eventName = `keydown(${e.code})`;

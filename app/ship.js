@@ -13,6 +13,7 @@ var MAX_VERTICAL_LANDING_SPEED = 1.5;
 var FULL_TANK = 100;
 
 var shipShape = require("./shipShape");
+var hub = require("./hub");
 
 module.exports = {
 
@@ -91,12 +92,6 @@ module.exports = {
         this.state = REFULING;
         this.message = `Refuling at ${this.landedAt.name}`;
     },
-    addCustomer(customer) {
-        this.customer = customer;
-    },
-    removeCustomer() {
-        this.customer = null;
-    },
     land(platform) {
         console.debug(`Landing at ${platform.name}`);
 
@@ -107,14 +102,15 @@ module.exports = {
         this.y = platform.y - shipShape.getLandingGearHeight(this);
         this.box = shipShape.recalculateBoundingBox(this);
         this.message = `Landed on ${platform.name}`;
-        if (this.customer) {
-            this.customer.disembark(this, this.landedAt);
-        } else if (this.landedAt.customer) {
-            this.landedAt.customer.board(this);
-        }
-        if (this.landedAt.isFuelStation && this.fuel < FULL_TANK) {
-            this.refule();
-        }
+        // if (this.customer) {
+        //     this.customer.disembark(this, this.landedAt);
+        // } else if (this.landedAt.customer) {
+        //     this.landedAt.customer.board(this);
+        // }
+        // if (this.landedAt.isFuelStation && this.fuel < FULL_TANK) {
+        //     this.refule();
+        // }
+        hub.broadcast("LANDED", {ship:this, platform});
     },
     startAt(platform) {
         this.fuel = FULL_TANK;
