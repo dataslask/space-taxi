@@ -1,6 +1,6 @@
 var _ = require("lodash");
 var messageBoard = require("./messageBoard");
-var hub = require("./hub");
+var game = require("./game");
 
 var WIDTH=5;
 var WIDTH2=WIDTH*2;
@@ -58,24 +58,21 @@ function Customer(platform, name, destination){
         }else {
           this.say("ASSHOLE!")
         }
-        hub.broadcast("DISEMBARKED", {customer:this, destination: this.destination, platform});
+        game.broadcast("DISEMBARKED", {customer:this, destination: this.destination, platform});
       },
       board(ship){
-        console.debug(`${this.name} boarding Ship`);
+        console.debug(`${this.name} boarding Ship`, game);
         this.platform = null;
         this.ship = ship;
         this.x = -1000;
         this.y = -1000;
         this.box = this.recalculateBoundingBox();
         this.say(`Take me to ${this.destination.name}`);
-        hub.broadcast("BOARDED", {customer:this, destination: this.destination});
+        game.broadcast("BOARDED", {customer:this, destination: this.destination});
       },
       say(text){
         var location = this.platform ? this.platform.name : "Ship";
         messageBoard.addMessage(`${name}@${location}: ${text}`);
-      },
-      attachToHub(){
-        this.subscription = hub.attach(this);
       },
       "LANDED"(payload){
         if (payload.platform === this.platform){
@@ -86,7 +83,6 @@ function Customer(platform, name, destination){
       }
   });
 
-  this.attachToHub();
   this.enter(platform);
   this.say("HEY TAXY!");
 }

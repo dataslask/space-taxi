@@ -1,15 +1,21 @@
 require("./game.css");
 
+const _ = require("lodash");
+
 const SPAWN_PROBABILITY = 1 / 60 / 3;
 
 const names = ["Smith", "Clara", "James", "Susan", "Bob", "Eve", "Hank", "Mary", "Mike", "Emily"];
 
-var hub = require("./hub");
+var game = {};
+
+module.exports = game;
+
+var world = require("./world");
 var Customer = require("./customer");
 
 var lastTicks = 0;
 
-var game = {
+_.assignIn(game, {
 
     hitTest(a, b) {
         if (a.box.x1 < b.box.x2 &&
@@ -73,9 +79,11 @@ var game = {
         }
         return false;
     },
-
-    attachToHub(){
-      this.subscription = hub.attach(this);
+    broadcast(eventName, payload) {
+      if (this.hasOwnProperty(eventName)) {
+        this[eventName](payload);
+      }
+      this.world.broadcast(eventName, payload);
     },
     "BOARDED"(payload){
       console.debug(`${payload.customer.name} boarded taxi`);
@@ -85,9 +93,7 @@ var game = {
       console.debug(`${payload.customer.name} disembarked taxi at ${result}`);
       this.world.remove(payload.customer);
     }
-};
-
-game.attachToHub();
+});
 
 window.addEventListener("keydown", e => {
     var eventName = `keydown(${e.code})`;
@@ -106,5 +112,3 @@ window.addEventListener("keyup", e => {
         console.debug(`Unhandled event: ${eventName}`);
     };
 });
-
-module.exports = game;

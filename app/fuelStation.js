@@ -1,5 +1,5 @@
 var _ = require("lodash");
-var hub = require("./hub");
+var game = require("./game");
 var Platform = require("./platform");
 
 function FuelStation(x, y, width, height, color, name, price) {
@@ -23,16 +23,13 @@ function FuelStation(x, y, width, height, color, name, price) {
         console.debug(`Refuling stopped. ${reason}`);
         var ship = this.refuling;
         this.refuling = null;
-        hub.broadcast("REFULED", {ship, totalFilled: this.totalFilled, totalCost: this.totalCost});
+        game.broadcast("REFULED", {ship, totalFilled: this.totalFilled, totalCost: this.totalCost});
       },
       refule(ship){
         console.debug("Refuling ", ship.name);
         this.refuling = ship;
         this.totalFilled = 0;
-        hub.broadcast("REFULING", {ship, price: this.price});
-      },
-      attachToHub(){
-        this.subscription = hub.attach(this);
+        game.broadcast("REFULING", {ship, price: this.price});
       },
       "LANDED"(payload){
         if (payload.platform === this){
@@ -46,8 +43,6 @@ function FuelStation(x, y, width, height, color, name, price) {
         }
       }
     });
-
-    this.attachToHub();
 }
 
 module.exports = FuelStation;

@@ -71,6 +71,13 @@ var world = {
             return false;
         });
     },
+    broadcast(eventName, payload) {
+      _.each(this.entities, entity => {
+        if (entity.hasOwnProperty(eventName)) {
+          entity[eventName](payload);
+        }
+      });
+    },
     redraw() {
       ctx.clearRect(0, 0, world.width, world.height);
       ctx.fillStyle = "black";

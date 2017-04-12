@@ -12,7 +12,7 @@ var MAX_VERTICAL_LANDING_SPEED = 1.5;
 var FULL_TANK = 50;
 
 var shipShape = require("./shipShape");
-var hub = require("./hub");
+var game = require("./game");
 
 module.exports = {
 
@@ -90,7 +90,7 @@ module.exports = {
 
         this.state = FLYING;
         this.landedAt = null;
-        hub.broadcast("FLYING", {ship:this});
+        game.broadcast("FLYING", {ship:this});
     },
     land(platform) {
         console.debug(`Landing at ${platform.name}`);
@@ -102,7 +102,7 @@ module.exports = {
         this.y = platform.y - shipShape.getLandingGearHeight(this);
         this.box = shipShape.recalculateBoundingBox(this);
         this.message = `Landed on ${platform.name}`;
-        hub.broadcast("LANDED", {ship:this, platform});
+        game.broadcast("LANDED", {ship:this, platform});
     },
     startAt(platform) {
         this.fuel = FULL_TANK;
