@@ -34,6 +34,13 @@ var world = {
         this.entities.push(entity);
         return this;
     },
+    remove(entity) {
+        _.pull(this.entities, entity);
+        return this;
+    },
+    any(entityType) {
+        return _.some(this.entities, {type:entityType});
+    },
     fps:0,
     tick(hitTest) {
       var now = new Date().getMilliseconds();

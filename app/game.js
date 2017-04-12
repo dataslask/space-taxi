@@ -1,5 +1,7 @@
 require("./game.css");
 
+const SPAWN_PROBABILITY = 1 / 60 / 3;
+
 const names = ["Smith", "Clara", "James", "Susan", "Bob", "Eve", "Hank", "Mary", "Mike", "Emily"];
 
 var hub = require("./hub");
@@ -29,6 +31,11 @@ var game = {
         return this.world.handle(eventName);
     },
     tick() {
+        if (!this.world.any("customer")){
+          if (Math.random() < SPAWN_PROBABILITY){
+            this.spawnCustomer();
+          }
+        }
         this.world.tick(this.hitTest);
         this.world.redraw();
         if (!this.ship.crashed()) {
@@ -55,9 +62,7 @@ var game = {
     start(world, ship) {
         this.world = world;
         this.ship = ship;
-        var start =  this.world.pickPlatform();
-        this.spawnCustomer(start);
-        this.startingPlatform = start;
+        this.startingPlatform = this.world.pickPlatform();
         this.restart();
     },
 
@@ -78,6 +83,7 @@ var game = {
     "DISEMBARKED"(payload){
       var result = payload.destination === payload.platform ? "destination" : "wrong platform"
       console.debug(`${payload.customer.name} disembarked taxi at ${result}`);
+      this.world.remove(payload.customer);
     }
 };
 
