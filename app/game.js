@@ -46,7 +46,7 @@ var game = {
 
     spawnCustomer(avoid) {
       var home = this.world.pickPlatform(avoid);
-      var destination =  this.world.pickPlatform(avoid || home);
+      var destination =  this.world.pickPlatform(avoid, home);
       var name = names[Math.round(Math.random() * (names.length - 1))];
       var customer = new Customer(home, name, destination);
       this.world.add(customer);
@@ -70,14 +70,14 @@ var game = {
     },
 
     attachToHub(){
-      this.subscription = hub.attach((eventName, payload) => {
-        if (this.hasOwnProperty(eventName)) {
-          this[eventName](payload);
-          }
-      });
+      this.subscription = hub.attach(this);
     },
     "BOARDED"(payload){
       console.debug(`${payload.customer.name} boarded taxi`);
+    },
+    "DISEMBARKED"(payload){
+      var result = payload.destination === payload.platform ? "destination" : "wrong platform"
+      console.debug(`${payload.customer.name} disembarked taxi at ${result}`);
     }
 };
 

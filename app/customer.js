@@ -52,6 +52,7 @@ function Customer(platform, name, destination){
       disembark(ship, platform){
         console.debug(`${this.name} disembarking at ${platform.name}`);
         this.enter(platform);
+        this.ship = null;
         if (this.destination.name === platform.name){
           this.say("Thanx");
         }else {
@@ -74,11 +75,7 @@ function Customer(platform, name, destination){
         messageBoard.addMessage(`${name}@${location}: ${text}`);
       },
       attachToHub(){
-        this.subscription = hub.attach((eventName, payload) => {
-          if (this.hasOwnProperty(eventName)) {
-            this[eventName](payload);
-            }
-        });
+        this.subscription = hub.attach(this);
       },
       "LANDED"(payload){
         if (payload.platform === this.platform){

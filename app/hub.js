@@ -6,7 +6,11 @@ var subscriptions = {};
 var hub = {
   broadcast(eventName, payload){
     console.debug(eventName, payload);
-    _.each(subscriptions, handler => handler(eventName, payload));
+    _.each(subscriptions, handler => {
+      if (handler.hasOwnProperty(eventName)) {
+        handler[eventName](payload);
+      }
+    });
   },
   attach(handler){
     subscriptions[nextToken] = handler;

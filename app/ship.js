@@ -1,7 +1,6 @@
 var FLYING = "flying";
 var LANDED = "landed";
 var CRASHED = "crashed";
-var REFULING = "refuling";
 var G = 0.025;
 var SIDE_THRUSTER = G * 0.5;
 var MAIN_THRUSTER = G * 1.75;
@@ -45,7 +44,6 @@ module.exports = {
                 ctx.fillText(`CRASHED! ${this.message}!`, 15, 15);
                 break;
             case LANDED:
-            case REFULING:
                 ctx.fillText(`${this.message}`, 15, 15);
                 break;
             default:
@@ -72,6 +70,11 @@ module.exports = {
         this.state = CRASHED;
         this.message = reason;
     },
+    addFuel(volume) {
+      var filled = Math.min(volume, FULL_TANK - this.fuel);
+      this.fuel += filled;
+      return filled;
+    },
     noFuel() {
         console.debug(`No more fuel`);
 
@@ -86,11 +89,7 @@ module.exports = {
 
         this.state = FLYING;
         this.landedAt = null;
-    },
-    refule() {
-        console.debug(`Refuling`);
-        this.state = REFULING;
-        this.message = `Refuling at ${this.landedAt.name}`;
+        hub.broadcast("FLYING", {ship:this});
     },
     land(platform) {
         console.debug(`Landing at ${platform.name}`);
@@ -102,14 +101,6 @@ module.exports = {
         this.y = platform.y - shipShape.getLandingGearHeight(this);
         this.box = shipShape.recalculateBoundingBox(this);
         this.message = `Landed on ${platform.name}`;
-        // if (this.customer) {
-        //     this.customer.disembark(this, this.landedAt);
-        // } else if (this.landedAt.customer) {
-        //     this.landedAt.customer.board(this);
-        // }
-        // if (this.landedAt.isFuelStation && this.fuel < FULL_TANK) {
-        //     this.refule();
-        // }
         hub.broadcast("LANDED", {ship:this, platform});
     },
     startAt(platform) {
@@ -161,15 +152,6 @@ module.exports = {
 
                 break;
 
-            case REFULING:
-                if (this.fuel < FULL_TANK) {
-                    this.fuel += this.landedAt.fillRate;
-                }
-                if (this.fuel > FULL_TANK) {
-                    this.fuel = FULL_TANK;
-                    this.land(this.landedAt);
-                }
-                break;
             default:
 
         }

@@ -73,13 +73,10 @@ var world = {
         });
         return this;
     },
-    pickPlatform(avoid){
-      var platforms = _.filter(this.entities, {type: "platform"});
+    pickPlatform(){
+      var platforms = _.filter(this.entities, x => x.type === "platform" && !_.includes(arguments, x));
 
-      while (true) {
-        var platform = platforms[Math.round(Math.random() * (platforms.length - 1))];
-        if (platform !== avoid) return platform;
-      }
+      return platforms[Math.round(Math.random() * (platforms.length - 1))];
     }
 };
 

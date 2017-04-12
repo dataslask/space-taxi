@@ -13,7 +13,7 @@ var Customer = require("./customer");
 var platforms = [
   new Platform(100, 300, 250, 20, "green", "Platform1"),
   new Platform(500, 400, 210, 20, "green", "Platform2"),
-  new FuelStation(550, 500, 80, 20, "green", "Platform3 (fuel)", 13.3),
+  new FuelStation(550, 500, 180, 20, "green", "Platform3 (fuel)", 13.3),
   new Platform(600, 150, 210, 60, "green", "Platform4"),
   new Platform(0, world.height - 20, world.width, 20, "brown", "Ground")
 ];
