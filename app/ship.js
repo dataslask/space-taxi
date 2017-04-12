@@ -9,7 +9,7 @@ var DOWN_THRUSTER = G * 0.5;
 var MAX_SPEED_WITH_LANDING_GEAR = 2.0;
 var MAX_HORIZONTAL_LANDING_SPEED = 0.5;
 var MAX_VERTICAL_LANDING_SPEED = 1.5;
-var FULL_TANK = 100;
+var FULL_TANK = 50;
 
 var shipShape = require("./shipShape");
 var hub = require("./hub");
@@ -76,8 +76,9 @@ module.exports = {
       return filled;
     },
     noFuel() {
-        console.debug(`No more fuel`);
-
+        if (this.thrust.x || this.thrust.y) {
+          console.debug(`No more fuel`);
+        }
         this.fuel = 0;
         this.thrust = {
             x: 0,
