@@ -13,6 +13,7 @@ var FULL_TANK = 50;
 
 var shipShape = require("./shipShape");
 var game = require("./game");
+var infoPanel = require("./infoPanel");
 
 module.exports = {
 
@@ -39,20 +40,6 @@ module.exports = {
         ctx.strokeStyle = "black";
         ctx.fillStyle = "black";
 
-        switch (this.state) {
-            case CRASHED:
-                ctx.fillText(`CRASHED! ${this.message}!`, 15, 15);
-                break;
-            case LANDED:
-                ctx.fillText(`${this.message}`, 15, 15);
-                break;
-            default:
-                ctx.fillText(`Speed: [${this.vx.toFixed(3)}, ${this.vy.toFixed(3)}] (${this.thrust.x.toFixed(2)}, ${this.thrust.y.toFixed(2)})`, 15, 15);
-        }
-        var fuel = this.fuel > 0 ? this.fuel.toFixed(2) : "EMPTY!";
-
-        ctx.fillText(`Fuel: ${fuel}`, 15, 30);
-
         shipShape.drawShip(ctx, this);
 
         if (this.showBox) {
@@ -68,7 +55,7 @@ module.exports = {
         this.vx = 0;
         this.vy = 0;
         this.state = CRASHED;
-        this.message = reason;
+        infoPanel.message(`CRASHED! ${reason}!`)
     },
     addFuel(volume) {
       var filled = Math.min(volume, FULL_TANK - this.fuel);
@@ -90,6 +77,7 @@ module.exports = {
 
         this.state = FLYING;
         this.landedAt = null;
+        infoPanel.message("Flying");
         game.broadcast("FLYING", {ship:this});
     },
     land(platform) {
@@ -101,7 +89,7 @@ module.exports = {
         this.state = LANDED;
         this.y = platform.y - shipShape.getLandingGearHeight(this);
         this.box = shipShape.recalculateBoundingBox(this);
-        this.message = `Landed on ${platform.name}`;
+        infoPanel.message(`Landed on ${platform.name}`);
         game.broadcast("LANDED", {ship:this, platform});
     },
     startAt(platform) {
@@ -157,6 +145,10 @@ module.exports = {
 
         }
         this.fuel -= (Math.abs(this.thrust.x) + Math.abs(this.thrust.y));
+
+        infoPanel.fuel(this.fuel);
+        infoPanel.speed(this.vx, this.vy);
+        infoPanel.thrust(this.thrust.x, this.thrust.y);
     },
     "keydown(Space)" () {},
     "keyup(Space)" () {

@@ -5,6 +5,8 @@ var world = require("./world").resize(window.innerWidth, window.innerHeight).app
 var messageBoard = require("./messageBoard").appendTo(document.body);
 messageBoard.addMessage("Welcome");
 
+var infoPanel = require("./infoPanel").appendTo(document.body);
+
 var Solid = require("./solid");
 var Platform = require("./platform");
 var FuelStation = require("./fuelStation");

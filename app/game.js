@@ -10,10 +10,9 @@ var game = {};
 
 module.exports = game;
 
+var infoPanel = require("./infoPanel");
 var world = require("./world");
 var Customer = require("./customer");
-
-var lastTicks = 0;
 
 _.assignIn(game, {
 
@@ -36,8 +35,17 @@ _.assignIn(game, {
         }
         return this.world.handle(eventName);
     },
+    fps:0,
+    lastTicks:0,
     tick() {
-        if (!this.world.any("customer")){
+      this.fps++;
+      var now = new Date().getTime();
+      if (now - this.lastTicks > 1000){
+        infoPanel.fps(this.fps);
+        this.lastTicks = now;
+        this.fps = 0;
+      }
+      if (!this.world.any("customer")){
           if (Math.random() < SPAWN_PROBABILITY){
             this.spawnCustomer();
           }

@@ -6,7 +6,6 @@ var canvas = document.createElement("CANVAS");
 canvas.className = "world";
 
 var ctx = canvas.getContext("2d");
-var lastTicks = 0;
 
 var world = {
     entities: [],
@@ -41,11 +40,7 @@ var world = {
     any(entityType) {
         return _.some(this.entities, {type:entityType});
     },
-    fps:0,
     tick(hitTest) {
-      var now = new Date().getMilliseconds();
-      this.fps = 1000 / (now - lastTicks);
-      lastTicks = now;
 
         _.forEach(this.entities, entity => {
             entity.tick(this);
@@ -80,8 +75,6 @@ var world = {
     },
     redraw() {
       ctx.clearRect(0, 0, world.width, world.height);
-      ctx.fillStyle = "black";
-      ctx.fillText(`FPS: ${Math.round(this.fps)}`, 15, 15 * 3);
         _.forEach(this.entities, entity => {
             entity.redraw(ctx);
         });
