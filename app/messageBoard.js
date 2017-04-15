@@ -13,6 +13,7 @@ module.exports = {
       message.innerText = text;
       messages.appendChild(message);
       console.debug(text);
+      setTimeout(() => message.remove(), 5000);
       return this;
     }
 };
