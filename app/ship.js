@@ -9,7 +9,7 @@ var DOWN_THRUSTER = G * 0.5;
 var MAX_SPEED_WITH_LANDING_GEAR = 2.0;
 var MAX_HORIZONTAL_LANDING_SPEED = 0.5;
 var MAX_VERTICAL_LANDING_SPEED = 1.5;
-var FULL_TANK = 50;
+var FULL_TANK = 100;
 
 var shipShape = require("./shipShape");
 var game = require("./game");
@@ -96,6 +96,7 @@ module.exports = {
         this.fuel = FULL_TANK;
         this.landingGearDeployed = true;
         this.x = platform.x + platform.width / 2;
+        this.thrust = {x:0, y:0};
         this.land(platform);
     },
     hit(entity) {
