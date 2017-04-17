@@ -4,9 +4,12 @@ const _ = require("lodash");
 
 var panel = document.createElement("DIV");
 
-var elements = ["fps", "fuel", "speedX", "speedY", "thrustX", "thrustY", "message"];
+var elements = ["fps", "fuel", "speedX", "speedY", "thrustX", "thrustY", "message", "lives", "cash"];
 
 module.exports = {
+    lives(lives) {
+      this._lives.innerText = lives;
+    },
     speed(x, y){
       this._speedX.innerText = Math.abs(x).toFixed(1);
       this._speedY.innerText = Math.abs(y).toFixed(1);

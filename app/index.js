@@ -2,10 +2,9 @@ var _ = require("lodash").noConflict();
 
 var world = require("./world").resize(window.innerWidth, window.innerHeight).appendTo(document.body);
 
-var messageBoard = require("./messageBoard").appendTo(document.body);
-messageBoard.addMessage("Welcome");
-
-var infoPanel = require("./infoPanel").appendTo(document.body);
+require("./messageBoard").appendTo(document.body);
+require("./infoPanel").appendTo(document.body);
+require("./modal").appendTo(document.body);
 
 var Solid = require("./solid");
 var Platform = require("./platform");
@@ -32,7 +31,7 @@ world.add(ship);
 
 var game = require("./game");
 
-game.start(world, ship);
+game.init(world, ship);
 
 window.onresize = function() {
   world.resize(window.innerWidth, window.innerHeight);

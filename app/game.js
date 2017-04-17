@@ -2,6 +2,7 @@ require("./game.css");
 
 const _ = require("lodash");
 
+const LIVES = 5;
 const SPAWN_PROBABILITY = 1 / 60 / 3;
 
 const names = ["Smith", "Clara", "James", "Susan", "Bob", "Eve", "Hank", "Mary", "Mike", "Emily"];
@@ -10,6 +11,7 @@ var game = {};
 
 module.exports = game;
 
+var modal = require("./modal.js");
 var infoPanel = require("./infoPanel");
 var world = require("./world");
 var Customer = require("./customer");
@@ -59,12 +61,6 @@ _.assignIn(game, {
         }
     },
 
-    restart() {
-        console.debug("Starting game loop...")
-        this.ship.startAt(this.startingPlatform);
-        this.tick();
-    },
-
     spawnCustomer(avoid) {
       var home = this.world.pickPlatform(avoid);
       var destination =  this.world.pickPlatform(avoid, home);
@@ -72,17 +68,25 @@ _.assignIn(game, {
       var customer = new Customer(home, name, destination);
       this.world.add(customer);
     },
-
-    start(world, ship) {
-        this.world = world;
-        this.ship = ship;
-        this.startingPlatform = this.world.pickPlatform();
-        this.restart();
+    init(world, ship) {
+      this.lives = LIVES;
+      this.world = world;
+      this.ship = ship;
+      this.startingPlatform = this.world.pickPlatform();
+      infoPanel.lives(this.lives);
+      modal.show(require("./welcome.html"));
     },
-
+    start() {
+        console.debug("Starting game loop...")
+        this.ship.startAt(this.startingPlatform);
+        this.tick();
+    },
+    gameOver() {
+        console.debug("No more lives! Game over!")
+    },
     "keyup(Space)" () {
-        if (this.ship.crashed()) {
-            this.restart();
+        if (this.lives && this.ship.crashed()) {
+            this.start();
             return true;
         }
         return false;
@@ -92,6 +96,13 @@ _.assignIn(game, {
         this[eventName](payload);
       }
       this.world.broadcast(eventName, payload);
+    },
+    "CRASHED" () {
+      if(this.lives) {
+        infoPanel.lives(--this.lives);
+      }else{
+        this.gameOver();
+      }
     },
     "BOARDED"(payload){
       console.debug(`${payload.customer.name} boarded taxi`);

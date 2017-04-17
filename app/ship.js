@@ -55,7 +55,8 @@ module.exports = {
         this.vx = 0;
         this.vy = 0;
         this.state = CRASHED;
-        infoPanel.message(`CRASHED! ${reason}!`)
+        infoPanel.message(`CRASHED! ${reason}!`);
+        game.broadcast("CRASHED");
     },
     addFuel(volume) {
       var filled = Math.min(volume, FULL_TANK - this.fuel);
